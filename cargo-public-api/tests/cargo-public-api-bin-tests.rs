@@ -175,7 +175,7 @@ fn subcommand_invocation() {
         // Sanity check that rustdoc JSON build progress is shown to users, i.e.
         // that we do not swallow stderr from the cargo rustdoc JSON building
         // subprocess
-        .stderr(contains("Documenting example_api"))
+        .stderr(contains("Documenting2 example_api"))
         .success();
 }
 
@@ -649,6 +649,23 @@ fn document_private_items() {
 }
 
 #[test]
+fn cap_lints_allow_by_default_when_diffing() {
+    // Create independent build dir so all tests can run in parallel
+    let build_dir = tempdir().unwrap();
+
+    let json = rustdoc_json_builder_for_crate("../test-apis/lint_error", &build_dir)
+        .build()
+        .unwrap();
+    let mut cmd = TestCmd::new().with_separate_target_dir();
+    cmd.arg("diff");
+    cmd.arg(&json);
+    cmd.arg(&json);
+    cmd.assert()
+        .stderr(contains("missing_docs"))
+        .success();
+}
+
+#[test]
 fn diff_against_published_version() {
     let mut cmd = TestCmd::new().with_test_repo();
     cmd.arg("diff");
@@ -777,6 +794,12 @@ fn long_help_wraps() {
 /// Helper to initialize a test crate git repo. Each test gets its own git repo
 /// to use so that tests can run in parallel.
 fn initialize_test_repo(dest: impl AsRef<Path>) {
+    create_test_git_repo::create_test_git_repo(dest, "../test-apis");
+}
+
+/// Helper to initialize a test crate git repo. Each test gets its own git repo
+/// to use so that tests can run in parallel.
+fn initialize_lint_error_test_repo(dest: impl AsRef<Path>) {
     create_test_git_repo::create_test_git_repo(dest, "../test-apis");
 }
 
