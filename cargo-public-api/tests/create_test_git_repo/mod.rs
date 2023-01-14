@@ -37,10 +37,10 @@ pub fn create_test_git_repo(dest_dir: impl AsRef<Path>, dirs_and_tags: &[]impl A
     run(git().args(["config", "user.name", "Cargo Public"]));
 
     let f = [
-        ("example_api-v0.1.0", "v0.1 .0"),
-        ("example_api-v0.1.1", "v0.1 .1"),
-        ("example_api-v0.2.0", "v0.2 .0"),
-        ("example_api-v0.3.0", "v0.3 .0"),
+        ("example_api-v0.1.0", "v0.1.0"),
+        ("example_api-v0.1.1", "v0.1.1"),
+        ("example_api-v0.2.0", "v0.2.0"),
+        ("example_api-v0.3.0", "v0.3.0"),
     ];
     // Now go through all directories and create git commits and tags from them
     for version in ["v0.1.0", "v0.1.1", "v0.2.0", "v0.3.0"] {
