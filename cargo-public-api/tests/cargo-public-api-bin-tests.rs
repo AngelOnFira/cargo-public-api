@@ -672,8 +672,46 @@ fn diff_against_latest_published_version() {
     cmd.arg("latest");
     cmd.assert()
         .stdout_or_update("./expected-output/diff-latest.txt")
-        .stderr(contains("Resolved `diff latest` to `diff 0.3.0`"))
+        .stderr(contains("Resolved `diff latest` to `diff 0.2.1`"))
         .success();
+}
+
+#[test]
+fn diff_against_highest_published_version() {
+    // Create a test repo. It already is at the latest version
+    let test_repo = TestRepo::new();
+
+    // Add a new item to the public API
+    append_to_lib_rs_in_test_repo(&test_repo, "pub struct AddedSinceLatest;");
+
+    let mut cmd = TestCmd::new().with_separate_target_dir();
+    cmd.current_dir(test_repo.path());
+    cmd.arg("diff");
+    cmd.arg("highest");
+    cmd.assert()
+        .stdout_or_update("./expected-output/diff-highest.txt")
+        .stderr(contains("Resolved `diff highest` to `diff 0.3.0`"))
+        .success();
+}
+
+#[test]
+fn diff_against_invalid_published_version() {
+    // Create a test repo. It already is at the latest version
+    let test_repo = TestRepo::new();
+
+    // Add a new item to the public API
+    append_to_lib_rs_in_test_repo(&test_repo, "pub struct AddedSinceLatest;");
+
+    let mut cmd = TestCmd::new().with_separate_target_dir();
+    cmd.current_dir(test_repo.path());
+    cmd.arg("diff");
+    cmd.arg("invalid-arg");
+    cmd.assert()
+        .stdout("")
+        .stderr(contains(
+            "Invalid published crate version syntax: invalid-arg",
+        ))
+        .failure();
 }
 
 #[test]
