@@ -651,15 +651,9 @@ fn document_private_items() {
 #[test]
 fn cap_lints_allow_by_default_when_diffing() {
     // Create independent build dir so all tests can run in parallel
-    let build_dir = tempdir().unwrap();
-
-    let json = rustdoc_json_builder_for_crate("../test-apis/lint_error", &build_dir)
-        .build()
-        .unwrap();
     let mut cmd = TestCmd::new().with_separate_target_dir();
     cmd.arg("diff");
-    cmd.arg(&json);
-    cmd.arg(&json);
+    cmd.arg("v0.1.0..v0.1.1");
     cmd.assert().stderr(contains("missing_docs")).success();
 }
 
@@ -941,6 +935,10 @@ fn rustdoc_json_builder_for_crate(
 /// have its own git repository to test with makes tests runnable concurrently.
 struct TestRepo {
     path: PathBuf,
+}
+
+enum TestRepoVariant {
+
 }
 
 impl TestRepo {
