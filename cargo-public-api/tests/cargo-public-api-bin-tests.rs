@@ -806,7 +806,10 @@ fn initialize_test_repo(dest: impl AsRef<Path>) {
 /// Helper to initialize a test crate git repo. Each test gets its own git repo
 /// to use so that tests can run in parallel.
 fn initialize_lint_error_test_repo(dest: impl AsRef<Path>) {
-    create_test_git_repo::create_test_git_repo(dest, "../test-apis");
+    create_test_git_repo::create_test_git_repo(
+        dest,
+        &[("lint_error", "v0.1.0"), ("lint_error", "v0.1.1")],
+    );
 }
 
 fn create_test_repo_with_dirty_git_tree() -> TestRepo {
