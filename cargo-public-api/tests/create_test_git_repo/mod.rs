@@ -38,13 +38,15 @@ pub fn create_test_git_repo(dest_dir: impl AsRef<Path>, dirs_and_tags: &[(&str, 
 
     // Now go through all directories and create git commits and tags from them
     for dir_and_tag in dirs_and_tags {
+        let dir_name = dir_and_tag.0;
+        let tag_name = dir_and_tag.1;
+
         let copy_to_dest = |name| {
-            let mut from = PathBuf::from(test_apis_dir.as_ref());
-            from.push(&format!("example_api-{version}"));
-            from.push(name);
+            let mut from = PathBuf::from("../test-apis");
+            from.push(dir_name);
 
             let mut to = PathBuf::from(dest_dir.as_ref());
-            to.push(name);
+            to.push(dir_name);
 
             fs::copy(from, to).unwrap();
         };
@@ -57,8 +59,8 @@ pub fn create_test_git_repo(dest_dir: impl AsRef<Path>, dirs_and_tags: &[(&str, 
         copy_to_dest("src/lib.rs");
 
         run(git().args(["add", "."]));
-        run(git().args(["commit", "--quiet", "-m"]).arg(version));
-        run(git().arg("tag").arg(version));
+        run(git().args(["commit", "--quiet", "-m"]).arg(tag_name));
+        run(git().arg("tag").arg(tag_name));
     }
 }
 
