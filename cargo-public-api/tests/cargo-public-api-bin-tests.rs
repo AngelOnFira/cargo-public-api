@@ -660,9 +660,7 @@ fn cap_lints_allow_by_default_when_diffing() {
     cmd.arg("diff");
     cmd.arg(&json);
     cmd.arg(&json);
-    cmd.assert()
-        .stderr(contains("missing_docs"))
-        .success();
+    cmd.assert().stderr(contains("missing_docs")).success();
 }
 
 #[test]
@@ -794,7 +792,15 @@ fn long_help_wraps() {
 /// Helper to initialize a test crate git repo. Each test gets its own git repo
 /// to use so that tests can run in parallel.
 fn initialize_test_repo(dest: impl AsRef<Path>) {
-    create_test_git_repo::create_test_git_repo(dest, "../test-apis");
+    create_test_git_repo::create_test_git_repo(
+        dest,
+        &[
+            ("example_api-v0.1.0", "v0.1.0"),
+            ("example_api-v0.1.1", "v0.1.1"),
+            ("example_api-v0.2.0", "v0.2.0"),
+            ("example_api-v0.3.0", "v0.3.0"),
+        ],
+    );
 }
 
 /// Helper to initialize a test crate git repo. Each test gets its own git repo

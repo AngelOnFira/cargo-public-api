@@ -17,7 +17,7 @@ use std::{
 ///
 /// `test_api_dir` - The `test-apis` source dir. Used to find the path to the
 /// `example_api`s.
-pub fn create_test_git_repo(dest_dir: impl AsRef<Path>, dirs_and_tags: &[]impl AsRef<Path>) {
+pub fn create_test_git_repo(dest_dir: impl AsRef<Path>, dirs_and_tags: &[(&str, &str)]) {
     // Make sure the dest exists
     fs::create_dir_all(&dest_dir).unwrap();
 
@@ -36,14 +36,8 @@ pub fn create_test_git_repo(dest_dir: impl AsRef<Path>, dirs_and_tags: &[]impl A
     run(git().args(["config", "user.email", "cargo-public-api@example.com"]));
     run(git().args(["config", "user.name", "Cargo Public"]));
 
-    let f = [
-        ("example_api-v0.1.0", "v0.1.0"),
-        ("example_api-v0.1.1", "v0.1.1"),
-        ("example_api-v0.2.0", "v0.2.0"),
-        ("example_api-v0.3.0", "v0.3.0"),
-    ];
     // Now go through all directories and create git commits and tags from them
-    for version in ["v0.1.0", "v0.1.1", "v0.2.0", "v0.3.0"] {
+    for dir_and_tag in dirs_and_tags {
         let copy_to_dest = |name| {
             let mut from = PathBuf::from(test_apis_dir.as_ref());
             from.push(&format!("example_api-{version}"));
