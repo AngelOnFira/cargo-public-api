@@ -783,29 +783,6 @@ fn long_help_wraps() {
     }
 }
 
-/// Helper to initialize a test crate git repo. Each test gets its own git repo
-/// to use so that tests can run in parallel.
-fn initialize_test_repo(dest: impl AsRef<Path>) {
-    create_test_git_repo::create_test_git_repo(
-        dest,
-        &[
-            ("example_api-v0.1.0", "v0.1.0"),
-            ("example_api-v0.1.1", "v0.1.1"),
-            ("example_api-v0.2.0", "v0.2.0"),
-            ("example_api-v0.3.0", "v0.3.0"),
-        ],
-    );
-}
-
-/// Helper to initialize a test crate git repo. Each test gets its own git repo
-/// to use so that tests can run in parallel.
-fn initialize_lint_error_test_repo(dest: impl AsRef<Path>) {
-    create_test_git_repo::create_test_git_repo(
-        dest,
-        &[("lint_error", "v0.1.0"), ("lint_error", "v0.1.1")],
-    );
-}
-
 fn create_test_repo_with_dirty_git_tree() -> TestRepo {
     let test_repo = TestRepo::new();
 
@@ -937,14 +914,30 @@ struct TestRepo {
     path: PathBuf,
 }
 
+#[derive(Default)]
 enum TestRepoVariant {
-
+    #[default]
+    ExampleApi,
+    LintError,
 }
 
 impl TestRepo {
     fn new() -> Self {
+        Self::new_with_variant(TestRepoVariant::default())
+    }
+
+    fn new_with_variant(variant: TestRepoVariant) -> Self {
         let tempdir = tempfile::tempdir().unwrap();
-        initialize_test_repo(tempdir.path());
+        let dirs_and_tags: &[(&str, &str)] = match variant {
+            TestRepoVariant::ExampleApi => &[
+                ("example_api-v0.1.0", "v0.1.0"),
+                ("example_api-v0.1.1", "v0.1.1"),
+                ("example_api-v0.2.0", "v0.2.0"),
+                ("example_api-v0.3.0", "v0.3.0"),
+            ],
+            TestRepoVariant::LintError => &[("lint_error", "v0.1.0"), ("lint_error", "v0.1.1")],
+        };
+        create_test_git_repo::create_test_git_repo(tempdir.path(), dirs_and_tags);
 
         Self {
             path: tempdir.into_path(),
@@ -1104,10 +1097,14 @@ impl TestCmd {
         }
     }
 
+    fn with_test_repo(self) -> Self {
+        Self::with_test_repo_variant(self, TestRepoVariant::default())
+    }
+
     /// Create a test repo (unique for the current test) and set its dir as the
     /// current dir.
-    fn with_test_repo(mut self) -> Self {
-        let test_repo = TestRepo::new();
+    fn with_test_repo_variant(mut self, variant: TestRepoVariant) -> Self {
+        let test_repo = TestRepo::new_with_variant(variant);
         self.cmd.current_dir(test_repo.path());
         self.test_repo = Some(test_repo);
 
