@@ -16,6 +16,7 @@ use std::{
 
 use assert_cmd::assert::Assert;
 use assert_cmd::Command;
+use predicates::prelude::PredicateBooleanExt;
 use predicates::str::contains;
 
 use public_api::MINIMUM_NIGHTLY_VERSION;
@@ -654,7 +655,9 @@ fn cap_lints_allow_by_default_when_diffing() {
     let mut cmd = TestCmd::new().with_test_repo_variant(TestRepoVariant::LintError);
     cmd.arg("diff");
     cmd.arg("v0.1.0..v0.1.1");
-    cmd.assert().stderr(contains("missing_docs")).success();
+    cmd.assert()
+        .stderr(contains("missing_docs").not())
+        .success();
 }
 
 #[test]
