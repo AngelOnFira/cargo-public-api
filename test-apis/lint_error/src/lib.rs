@@ -12,5 +12,4 @@
 pub struct MissingDocs;
 
 /// Test for verbose output about missing items
-#[cfg(feature = "missing-items")]
 pub use example_api;

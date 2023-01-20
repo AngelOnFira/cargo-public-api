@@ -176,7 +176,7 @@ fn subcommand_invocation() {
         // Sanity check that rustdoc JSON build progress is shown to users, i.e.
         // that we do not swallow stderr from the cargo rustdoc JSON building
         // subprocess
-        .stderr(contains("Documenting2 example_api"))
+        .stderr(contains("Documenting example_api"))
         .success();
 }
 

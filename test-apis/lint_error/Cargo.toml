@@ -5,9 +5,8 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-# missing-items = ["dep:example_api"]
+missing-items = ["dep:example_api"]
 
-# [dependencies.example_api]
-# path = "../example_api-v0.2.0"
-# version = "0.2.0"
-# optional = true
+[dependencies.example_api]
+version = "0.2.0"
+optional = true
