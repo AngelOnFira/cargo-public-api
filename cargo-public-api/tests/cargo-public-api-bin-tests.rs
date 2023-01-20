@@ -933,6 +933,7 @@ impl TestRepo {
         Self::new_with_variant(TestRepoVariant::default())
     }
 
+    #[allow(clippy::needless_pass_by_value)]
     fn new_with_variant(variant: TestRepoVariant) -> Self {
         let tempdir = tempfile::tempdir().unwrap();
         let dirs_and_tags: &[(&str, &str)] = match variant {
