@@ -651,10 +651,14 @@ fn document_private_items() {
 
 #[test]
 fn cap_lints_allow_by_default_when_diffing() {
-    // Create independent build dir so all tests can run in parallel
     let mut cmd = TestCmd::new().with_test_repo_variant(TestRepoVariant::LintError);
     cmd.arg("diff");
     cmd.arg("v0.1.0..v0.1.1");
+
+    // If `missing_docs` is printed, it must mean that the lint was not capped.
+    // So require it to be absent in the output, since by default we do not want
+    // to show lint errors when diffing. Because the user typically can't do
+    // anything about it.
     cmd.assert()
         .stderr(contains("missing_docs").not())
         .success();
