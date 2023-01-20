@@ -651,7 +651,7 @@ fn document_private_items() {
 #[test]
 fn cap_lints_allow_by_default_when_diffing() {
     // Create independent build dir so all tests can run in parallel
-    let mut cmd = TestCmd::new().with_separate_target_dir();
+    let mut cmd = TestCmd::new().with_test_repo_variant(TestRepoVariant::LintError);
     cmd.arg("diff");
     cmd.arg("v0.1.0..v0.1.1");
     cmd.assert().stderr(contains("missing_docs")).success();

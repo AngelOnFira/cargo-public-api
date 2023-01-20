@@ -44,9 +44,10 @@ pub fn create_test_git_repo(dest_dir: impl AsRef<Path>, dirs_and_tags: &[(&str, 
         let copy_to_dest = |name| {
             let mut from = PathBuf::from("../test-apis");
             from.push(dir_name);
+            from.push(name);
 
             let mut to = PathBuf::from(dest_dir.as_ref());
-            to.push(dir_name);
+            to.push(name);
 
             fs::copy(from, to).unwrap();
         };
