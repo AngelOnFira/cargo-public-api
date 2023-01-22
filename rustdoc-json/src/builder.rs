@@ -52,6 +52,7 @@ fn cargo_rustdoc_command(options: &Builder) -> Command {
         package_target,
         document_private_items,
         cap_lints,
+        no_deps,
     } = options;
 
     let mut command = OVERRIDDEN_TOOLCHAIN
@@ -110,6 +111,9 @@ fn cargo_rustdoc_command(options: &Builder) -> Command {
     }
     if let Some(cap_lints) = cap_lints {
         command.args(["--cap-lints", cap_lints]);
+    }
+    if *no_deps {
+        command.arg("--no-deps");
     }
     command
 }
@@ -198,6 +202,7 @@ pub struct Builder {
     package_target: PackageTarget,
     document_private_items: bool,
     cap_lints: Option<String>,
+    no_deps: bool,
 }
 
 impl Default for Builder {
@@ -216,6 +221,7 @@ impl Default for Builder {
             package_target: PackageTarget::default(),
             document_private_items: false,
             cap_lints: Some(String::from("warn")),
+            no_deps: false,
         }
     }
 }
@@ -339,6 +345,13 @@ impl Builder {
     #[must_use]
     pub fn cap_lints(mut self, cap_lints: Option<impl AsRef<str>>) -> Self {
         self.cap_lints = cap_lints.map(|c| c.as_ref().to_owned());
+        self
+    }
+
+    /// Whether to pass `--no-deps` to `cargo rustdoc`. Default: `false`
+    #[must_use]
+    pub const fn no_deps(mut self, no_deps: bool) -> Self {
+        self.no_deps = no_deps;
         self
     }
 
